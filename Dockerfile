@@ -1,14 +1,26 @@
-# Imagen base de OpenJDK compatible con Java 20
-FROM openjdk:20-jdk-slim
+# Usa una imagen de Maven para compilar el proyecto
+FROM maven:3.8.6-openjdk-20-slim AS build
 
-# Directorio de trabajo en el contenedor
+# Establece el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copiar el archivo JAR generado en el contenedor
-COPY target/auto-workshop-api-0.0.1-SNAPSHOT.jar app.jar
+# Copia todos los archivos del proyecto al contenedor
+COPY . .
 
-# Puerto expuesto
+# Ejecuta la compilación de Maven para generar el archivo JAR
+RUN mvn clean package -DskipTests
+
+# Usa una imagen más ligera de Java para ejecutar el archivo JAR
+FROM openjdk:20-jdk-slim
+
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia el archivo JAR generado desde el contenedor de compilación
+COPY --from=build /app/target/auto-workshop-api-0.0.1-SNAPSHOT.jar app.jar
+
+# Expone el puerto en el que se ejecuta la aplicación
 EXPOSE 8080
 
-# Comando de inicio
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando para ejecutar el JAR
+CMD ["java", "-jar", "app.jar"]
