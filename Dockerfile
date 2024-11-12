@@ -1,5 +1,5 @@
 # Usa una imagen de Maven para compilar el proyecto
-FROM maven:3.8.6-openjdk-20-slim AS build
+FROM maven:3.8.6-openjdk-17-slim AS build
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Usa una imagen más ligera de Java para ejecutar el archivo JAR
-FROM openjdk:20-jdk-slim
+FROM openjdk:17-jdk-slim
 
 # Establece el directorio de trabajo
 WORKDIR /app
