@@ -1,0 +1,6 @@
+{
+  "build": {
+    "prebuild": "mvn clean package -DskipTests"
+  }
+}
+g
